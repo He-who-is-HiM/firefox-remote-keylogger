@@ -1,0 +1,9 @@
+{
+  "name": "firefox-remote-keylogger",
+  "title": "Firefox Remote Keylogger",
+  "id": "jid1-VmbY9kNBENvhTQ",
+  "description": "A basic add-on demostrating the capability of a Firefox extension to act as a keylogger, capturing all printable and a few non-printable keystrokes and sending the data to a remote server",
+  "author": "Punit Gupta",
+  "license": "MPL 2.0",
+  "version": "0.1"
+}
